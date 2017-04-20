@@ -3,7 +3,13 @@ class Api::V1::BugsController < ApplicationController
   before_action :set_bug, only: [:show, :update, :destroy]
   # GET /bugs
   def index
-    @bugs = Bug.all
+    @bugs = Bug.search((params[:q].present? ? params[:q] : ""))
+    @index_mapping = Bug.index_mapping 
+    # for mapping the att. 
+#     {"properties"=>{"application_token"=>{"type"=>"string"}, "comment"=>{"type"=>"string", "fields"=>{"keyword"=>{"type"=>"string", "index"=>
+# "not_analyzed", "ignore_above"=>256, "fielddata"=>false}}, "fielddata"=>false}, "created_at"=>{"type"=>"date", "format"=>"strict_date_option
+# al_time||epoch_millis"}, "id"=>{"type"=>"long"}, "number"=>{"type"=>"long"}, "priority"=>{"type"=>"string"}, "status"=>{"type"=>"string"}, "
+# updated_at"=>{"type"=>"date", "format"=>"strict_date_optional_time||epoch_millis"}}}
     render json: @bugs
   end
   # GET /bugs/1
