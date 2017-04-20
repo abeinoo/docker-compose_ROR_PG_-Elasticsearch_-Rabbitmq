@@ -1,6 +1,8 @@
 class Api::V1::BugsController < ApplicationController
-  skip_before_filter :verify_authenticity_token, :only => [:index, :create]
+  skip_before_filter :verify_authenticity_token
   before_action :set_bug, only: [:show, :update, :destroy]
+  before_action :set_bug_by_app_token, only: [:show_bug]
+
   # GET /bugs
   def index
     @bugs = Bug.search((params[:q].present? ? params[:q] : ""))
@@ -16,11 +18,16 @@ class Api::V1::BugsController < ApplicationController
   def show
     render json: @bug
   end
+
+  def show_bug
+    render json: @bug
+  end
   # POST /bugs
   def create
-    byebug
     @bug = Bug.new(bug_params)
+    
     if @bug.save
+      Publisher.publish("bugs", @bug.attributes)
       render json: @bug, status: :created, location: [:api, @bug]
     else
       render json: @bug.errors, status: :unprocessable_entity
@@ -41,7 +48,10 @@ class Api::V1::BugsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_bug
-      @bug = bug.find(params[:id])
+      @bug = Bug.find(params[:id])
+    end
+    def set_bug_by_app_token
+      @bug = Bug.find_by(number: params[:number],application_token: params[:app_token])
     end
     # Only allow a trusted parameter "white list" through.
     def bug_params
