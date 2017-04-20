@@ -12,9 +12,10 @@ class Api::V1::BugsController < ApplicationController
   end
   # POST /bugs
   def create
-    byebug
     @bug = Bug.new(bug_params)
+    
     if @bug.save
+      Publisher.publish("bugs", @bug.attributes)
       render json: @bug, status: :created, location: [:api, @bug]
     else
       render json: @bug.errors, status: :unprocessable_entity
