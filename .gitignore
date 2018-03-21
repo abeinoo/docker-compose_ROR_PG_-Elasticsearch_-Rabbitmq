@@ -15,3 +15,13 @@
 
 # Ignore Byebug command history file.
 .byebug_history
+
+# environment_variables
+.env
+config/secrets.yml
+
+# generated sprites
+config/database.yml
+
+# Ignore Rubymine config
+.idea/

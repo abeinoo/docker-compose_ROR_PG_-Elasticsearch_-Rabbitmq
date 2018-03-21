@@ -1,0 +1,19 @@
+
+default: &default
+  adapter: <%= Rails.application.secrets.database[:master][:adapter] %>
+  prepared_statements: false
+  encoding: unicode
+  pool: <%= Rails.application.secrets.database[:master][:pool] %>
+  username: <%= Rails.application.secrets.database[:master][:username] %>
+  password: <%= Rails.application.secrets.database[:master][:password] %>
+  host: <%= Rails.application.secrets.database[:master][:host] %>
+  port: <%= Rails.application.secrets.database[:master][:port] %>
+  database: <%= Rails.application.secrets.database[:master][:database] %>
+
+development:
+  <<: *default
+test:
+  <<: *default
+  database: <%= Rails.application.secrets.database[:master][:database] %><%= ENV['TEST_ENV_NUMBER'] %>
+production:
+  <<: *default
